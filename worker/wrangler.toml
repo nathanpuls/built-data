@@ -1,0 +1,12 @@
+name = "built-api-gateway"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+routes = [
+  { pattern = "api.built.at/*", zone_name = "built.at" }
+]
+
+# Environment variables (set these via: wrangler secret put SUPABASE_URL)
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
