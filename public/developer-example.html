@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer's "Headless" Player</title>
+    <!-- 1. The Developer includes the Supabase SDK (or their own backend logic) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; padding: 40px; background: #f0f0f0; max-width: 600px; mx-auto; }
+        .player-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .song-title { font-weight: bold; margin-bottom: 5px; font-size: 18px; }
+        .debug-info { font-family: monospace; font-size: 11px; color: #666; margin-top: 5px; background: #eee; padding: 4px; border-radius: 4px; }
+        audio { width: 100%; margin-top: 10px; }
+        code { background: #eee; padding: 2px 4px; border-radius: 4px; color: #d63384; font-family: monospace; }
+        .explanation { margin-bottom: 30px; line-height: 1.5; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="explanation">
+        <h1>The Developer's Responsibility</h1>
+        <p>I am a developer. I built this <b>Generic Audio Player</b>.</p>
+        <p>I don't know what you named your database columns. Maybe you used <code>song_name</code>, maybe <code>track_title</code>.</p>
+        <p>So, I wrote my code to be <b>flexible</b>. I look at the URL to see what keys you want me to use.</p>
+    </div>
+
+    <div id="player-container">
+        <!-- Songs will be injected here -->
+        <p>Loading your data...</p>
+    </div>
+
+    <script>
+        // ==========================================
+        // STEP 1: CONFIGURATION (The "Contract")
+        // ==========================================
+        // The Developer needs to know:
+        // A. Where the data lives (Project & Collection ID)
+        // B. What FIELDS to use (The "Mapping")
+        
+        const params = new URLSearchParams(window.location.search);
+        
+        const PROJECT_URL = "https://aujukmshqfgmdqhaenyx.supabase.co"; // Valid for this demo
+        const ANON_KEY    = params.get('key');    // Passed in URL for security in this demo
+        const COLLECTION  = params.get('col');    // The Collection ID
+        
+        // --- THIS IS THE KEY PART ---
+        // The Developer reads the "Mapping" from the URL
+        // If the user visited with ?title_field=track_title, then titleKey = "track_title"
+        const titleKey = params.get('title_field') || 'title'; 
+        const urlKey   = params.get('url_field')   || 'url';
+
+        async function init() {
+            if(!ANON_KEY || !COLLECTION) {
+                document.getElementById('player-container').innerHTML = `<p style="color:red">Missing configuration in URL (key or col).</p>`;
+                return;
+            }
+
+            // ==========================================
+            // STEP 2: FETCH RAW DATA
+            // ==========================================
+            const supabase = window.supabase.createClient(PROJECT_URL, ANON_KEY);
+            
+            // We just fetch the raw JSON "data" column
+            const { data: rows, error } = await supabase
+                .schema('built_flexdata')
+                .from('rows')
+                .select('data')
+                .eq('collection_id', COLLECTION)
+                .order('sort_order', { ascending: true });
+
+            if(error) return console.error(error);
+
+            // ==========================================
+            // STEP 3: RENDER (Dynamic Connect)
+            // ==========================================
+            const container = document.getElementById('player-container');
+            container.innerHTML = ''; // Clear loading text
+
+            rows.forEach(row => {
+                // --- THE MAGIC LINE ---
+                // Instead of row.data.title, we use row.data[titleKey]
+                // This allows the variable `titleKey` to determine which field is read!
+                const songTitle = row.data[titleKey] || 'Untitled';
+                const songUrl   = row.data[urlKey];
+
+                if(songUrl) {
+                    const el = document.createElement('div');
+                    el.className = 'player-card';
+                    el.innerHTML = `
+                        <div class="song-title">${songTitle}</div>
+                        <div class="debug-info">
+                            DATA SOURCE: row.data[<span style="color:blue">"${titleKey}"</span>]
+                        </div>
+                        <audio controls src="${songUrl}"></audio>
+                    `;
+                    container.appendChild(el);
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

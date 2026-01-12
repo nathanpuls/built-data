@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Developer Integration</title>
+    <!-- 1. Include Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            background: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .prop {
+            color: #9cdcfe;
+        }
+
+        h2 {
+            margin-top: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .demo-output {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .player-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>The "Direct" Approach</h1>
+    <p>
+        In this scenario, <b>I am the Developer</b> and <b>I created the Schema</b>.
+        <br>
+        I <i>know</i> that the field is named <code>track_title</code>.
+        <br>
+        I <i>know</i> that the audio file is in <code>url</code>.
+    </p>
+    <p>So, I don't need any complex mapping. I just write the code directly.</p>
+
+    <h2>The Code I Write:</h2>
+    <div class="code-block">
+        <span class="keyword">const</span> { data: rows } = <span class="keyword">await</span> supabase
+        .from(<span class="string">'rows'</span>)
+        .select(<span class="string">'data'</span>)
+        .eq(<span class="string">'collection_id'</span>, YOUR_COLLECTION_ID);
+
+        <span class="comment">// Simple, Direct Loop:</span>
+        rows.forEach(row => {
+        <span class="comment">// I know the names, so I just type them:</span>
+        <span class="keyword">const</span> title = row.data.<span class="prop">track_title</span>;
+        <span class="keyword">const</span> mp3 = row.data.<span class="prop">url</span>;
+
+        <span class="comment">// Create my UI...</span>
+        myPlayer.add(title, mp3);
+        });
+    </div>
+
+    <h2>Live Demo Output:</h2>
+    <div id="demo-output" class="demo-output">
+        <i>Loading from your database...</i>
+    </div>
+
+    <script>
+        // --- REAL LIVE CODE ---
+        const params = new URLSearchParams(window.location.search);
+        const PROJECT_URL = "https://aujukmshqfgmdqhaenyx.supabase.co";
+        const ANON_KEY = params.get('key');
+        const COLLECTION = params.get('col');
+
+        async function run() {
+            if (!ANON_KEY || !COLLECTION) return;
+
+            // 1. connect
+            const supabase = window.supabase.createClient(PROJECT_URL, ANON_KEY);
+
+            // 2. fetch
+            const { data: rows } = await supabase
+                .schema('built_flexdata')
+                .from('rows')
+                .select('data')
+                .eq('collection_id', COLLECTION)
+                .order('sort_order', { ascending: true });
+
+            // 3. render
+            const container = document.getElementById('demo-output');
+            container.innerHTML = ''; // clear loading message
+
+            rows.forEach(row => {
+                // THE GRANULAR PART:
+                // Because I (the dev) defined the schema, I know exactly what to type.
+                const title = row.data.track_title;
+                const url = row.data.url;
+
+                if (url) {
+                    const div = document.createElement('div');
+                    div.className = 'player-item';
+                    div.innerHTML = `<b>${title}</b> <br> <audio controls src="${url}"></audio>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+        run();
+    </script>
+
+</body>
+
+</html>

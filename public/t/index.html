@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Built.at Text Viewer</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 12px;
+    }
+    h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Text Items from Built.at</h2>
+  <ul id="textList">
+    <li>Loading...</li>
+  </ul>
+
+  <script>
+    const API_URL = "http://localhost:3001/api/v1/344261f6-c32e-4f07-beeb-aee6e56fc399/text";
+    const textList = document.getElementById("textList");
+
+    async function loadText() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        // Clear placeholder
+        textList.innerHTML = "";
+
+        data.results.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = item["fld_9vjj7k8a"] || "(No title)";
+          textList.appendChild(li);
+        });
+
+      } catch (error) {
+        textList.innerHTML = "<li>Error loading text</li>";
+        console.error("Error fetching Built.at text:", error);
+      }
+    }
+
+    loadText();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Headless Swap | Developer Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .highlight-placeholder {
+            color: #4ade80;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-200 p-8 font-sans">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-12 border-b border-slate-800 pb-8">
+            <h1 class="text-4xl font-black text-white mb-2 italic">THE HEADLESS SWAP</h1>
+            <p class="text-slate-400 text-lg">How a developer replaces <span class="text-red-400">Hardcoded Info</span>
+                with <span class="text-emerald-400">Dynamic Placeholders</span>.</p>
+        </header>
+
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm">1</span>
+                The Hardcoded Starting Point
+            </h2>
+            <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                <p class="text-sm text-slate-400 mb-4 font-mono">// Standard HTML - Static & Boring</p>
+                <div class="comparison-grid">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-slate-500 mb-2">The Code</h3>
+                        <pre><code>&lt;h1&gt;Summer Vibes&lt;/h1&gt;
+&lt;audio src="song1.mp3"&gt;&lt;/audio&gt;</code></pre>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-xs uppercase tracking-widest text-slate-500 mb-2">The Result</h3>
+                        <div class="bg-white/5 p-4 rounded-lg border border-white/10">
+                            <h1 class="text-xl font-bold text-white">Summer Vibes</h1>
+                            <div class="mt-2 text-xs text-slate-500 italic">Song source: song1.mp3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-sm">2</span>
+                The "Headless" Swap
+            </h2>
+            <div class="bg-slate-800 rounded-xl p-6 border border-emerald-500/30 ring-1 ring-emerald-500/20">
+                <p class="text-sm text-emerald-400/70 mb-4 font-mono">// Built.at Dynamic Way - Powerful & Flexible</p>
+                <div class="comparison-grid">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-widest text-emerald-500/50 mb-2">The Dynamic Code</h3>
+                        <pre><code>&lt;h1&gt;${item<span class="highlight-placeholder">[mapping.title]</span>}&lt;/h1&gt;
+&lt;audio src="${item<span class="highlight-placeholder">[mapping.audio]</span>}"&gt;&lt;/audio&gt;</code></pre>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h3 class="text-xs uppercase tracking-widest text-emerald-500/50 mb-2">The Live Result</h3>
+                        <div class="bg-emerald-500/10 p-4 rounded-lg border border-emerald-500/20">
+                            <h1 class="text-xl font-bold text-white italic">Whatever is in your Database</h1>
+                            <div class="mt-2 text-xs text-emerald-400/50 italic">Song source: Dynamic URL from API</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-indigo-950/20 border border-indigo-500/20 p-8 rounded-2xl">
+                <h3 class="text-indigo-400 font-bold mb-4 uppercase tracking-tighter text-sm">Why swap to Placeholders?
+                </h3>
+                <ul class="space-y-4 text-sm text-slate-300">
+                    <li class="flex items-start gap-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                        <span><b>Zero Maintenance:</b> You change the song file in the Grid, the developer's site
+                            updates automatically.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                        <span><b>Schema Proof:</b> If you rename your column from "Title" to "Label", the coder only
+                            changes one variable name.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                        <span><b>Developer Freedom:</b> They write the HTML/CSS they want. You provide the raw "fuel"
+                            (data).</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-8 rounded-2xl relative overflow-hidden group">
+                <h3 class="text-white font-bold mb-2">Ready to Build?</h3>
+                <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                    A "Headless" coder treats your database like a <b>Local Config File</b> that happens to live on the
+                    internet.
+                </p>
+                <div class="bg-black p-4 rounded-lg font-mono text-[10px] text-slate-500">
+                    <span class="text-emerald-400">fetch</span>('https://built.at/api/v1/PROJECT/DATA')<br />
+                    &nbsp;&nbsp;.then(res => res.json())<br />
+                    &nbsp;&nbsp;.then(json => renderCustomUI(json));
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-slate-600 text-xs mt-12 mb-20 uppercase tracking-widest font-bold">
+            Built.at &copy; 2026 | Headless CMS for Builders
+        </footer>
+    </div>
+
+</body>
+
+</html>
